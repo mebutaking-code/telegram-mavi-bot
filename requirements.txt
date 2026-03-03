@@ -1,2 +1,2 @@
-Python programlama dili
-Openai
+python-telegram-bot==21.6
+openai==1.58.1
