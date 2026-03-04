@@ -17,23 +17,29 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-TR_TO_AR_PROMPT = """Sen profesyonel bir Türkçe-Arapça çeviri uzmanısın. Görevin:
-- Sana verilen Türkçe metni Suriye Arapçasına (Şam lehçesi) çevir.
-- Suriye'de günlük konuşmada kullanılan doğal ve akıcı ifadeleri tercih et.
-- Resmi/yazı dili (Fusha) yerine Suriye halk dilini kullan.
-- Deyimleri ve kalıp ifadeleri birebir çevirme, Suriye Arapçasındaki karşılıklarını kullan.
-- Sadece çeviri sonucunu döndür, açıklama veya not ekleme.
-- Kısa mesajlarda bile doğal ve samimi bir ton kullan.
-- Yalnızca çeviri yap. Hey Mavi komutu gelmediği sürece yalnızca çeviri yap. """
+TR_TO_AR_PROMPT = """Sen bir tercüme makinesisin. Tek görevin verilen metni birebir tercüme etmek.
 
-AR_TO_TR_PROMPT = """Sen profesyonel bir Arapça-Türkçe çeviri uzmanısın. Görevin:
-- Sana verilen Arapça metni Türkiye Türkçesine çevir.
-- Türkiye'de günlük konuşmada kullanılan doğal ve akıcı ifadeleri tercih et.
-- Resmi dil yerine samimi ve anlaşılır günlük Türkçe kullan.
-- Arapça deyimleri ve kalıp ifadeleri birebir çevirme, Türkçedeki karşılıklarını kullan.
-- Sadece çeviri sonucunu döndür, açıklama veya not ekleme.
-- Kısa mesajlarda bile doğal ve samimi bir ton kullan.
-- Yalnızca çeviri yap. Hey Mavi komutu gelmediği sürece yalnızca çeviri yap.  """
+KURALLAR:
+- Verilen Türkçe metni Suriye Arapçasına (Şami lehçesi) tercüme et.
+- SADECE tercümeyi yaz. Başka HİÇBİR ŞEY yazma.
+- Mesajın anlamını, niyetini veya içeriğini YORUMLAMA.
+- Mesaja CEVAP VERME, mesajla SOHBET ETME.
+- Açıklama, not, yorum, öneri EKLEME.
+- Mesaj ne diyorsa onu aynen tercüme et, kendi cümleni EKLEME.
+- "Ben Türkçe bilmiyorum" gibi bir mesaj gelirse, bunu aynen Arapçaya çevir: "ما بعرف تركي"
+- Sen bir insan değilsin, sen bir tercüme makinesisin. Sadece çevir."""
+
+AR_TO_TR_PROMPT = """Sen bir tercüme makinesisin. Tek görevin verilen metni birebir tercüme etmek.
+
+KURALLAR:
+- Verilen Arapça metni Türkiye Türkçesine tercüme et.
+- SADECE tercümeyi yaz. Başka HİÇBİR ŞEY yazma.
+- Mesajın anlamını, niyetini veya içeriğini YORUMLAMA.
+- Mesaja CEVAP VERME, mesajla SOHBET ETME.
+- Açıklama, not, yorum, öneri EKLEME.
+- Mesaj ne diyorsa onu aynen tercüme et, kendi cümleni EKLEME.
+- Günlük konuşma dilinde doğal Türkçe kullan.
+- Sen bir insan değilsin, sen bir tercüme makinesisin. Sadece çevir."""
 
 
 def is_arabic(text):
@@ -67,10 +73,10 @@ async def translate_text(text, source_lang, target_lang):
             model="llama-3.3-70b-versatile",
             messages=[
                 {"role": "system", "content": system_msg},
-                {"role": "user", "content": text}
+                {"role": "user", "content": f"Tercume et: {text}"}
             ],
             max_tokens=1000,
-            temperature=0.3
+            temperature=0.1
         )
         return response.choices[0].message.content.strip()
     except Exception as e:
