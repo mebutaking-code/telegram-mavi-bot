@@ -23,7 +23,8 @@ TR_TO_AR_PROMPT = """Sen profesyonel bir Türkçe-Arapça çeviri uzmanısın. G
 - Resmi/yazı dili (Fusha) yerine Suriye halk dilini kullan.
 - Deyimleri ve kalıp ifadeleri birebir çevirme, Suriye Arapçasındaki karşılıklarını kullan.
 - Sadece çeviri sonucunu döndür, açıklama veya not ekleme.
-- Kısa mesajlarda bile doğal ve samimi bir ton kullan."""
+- Kısa mesajlarda bile doğal ve samimi bir ton kullan.
+- Yalnızca çeviri yap. Hey Mavi komutu gelmediği sürece yalnızca çeviri yap. """
 
 AR_TO_TR_PROMPT = """Sen profesyonel bir Arapça-Türkçe çeviri uzmanısın. Görevin:
 - Sana verilen Arapça metni Türkiye Türkçesine çevir.
@@ -31,7 +32,8 @@ AR_TO_TR_PROMPT = """Sen profesyonel bir Arapça-Türkçe çeviri uzmanısın. G
 - Resmi dil yerine samimi ve anlaşılır günlük Türkçe kullan.
 - Arapça deyimleri ve kalıp ifadeleri birebir çevirme, Türkçedeki karşılıklarını kullan.
 - Sadece çeviri sonucunu döndür, açıklama veya not ekleme.
-- Kısa mesajlarda bile doğal ve samimi bir ton kullan."""
+- Kısa mesajlarda bile doğal ve samimi bir ton kullan.
+- Yalnızca çeviri yap. Hey Mavi komutu gelmediği sürece yalnızca çeviri yap.  """
 
 
 def is_arabic(text):
