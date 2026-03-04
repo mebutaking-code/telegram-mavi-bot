@@ -17,6 +17,23 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+TR_TO_AR_PROMPT = """Sen profesyonel bir Türkçe-Arapça çeviri uzmanısın. Görevin:
+- Sana verilen Türkçe metni Suriye Arapçasına (Şam lehçesi) çevir.
+- Suriye'de günlük konuşmada kullanılan doğal ve akıcı ifadeleri tercih et.
+- Resmi/yazı dili (Fusha) yerine Suriye halk dilini kullan.
+- Deyimleri ve kalıp ifadeleri birebir çevirme, Suriye Arapçasındaki karşılıklarını kullan.
+- Sadece çeviri sonucunu döndür, açıklama veya not ekleme.
+- Kısa mesajlarda bile doğal ve samimi bir ton kullan."""
+
+AR_TO_TR_PROMPT = """Sen profesyonel bir Arapça-Türkçe çeviri uzmanısın. Görevin:
+- Sana verilen Arapça metni Türkiye Türkçesine çevir.
+- Türkiye'de günlük konuşmada kullanılan doğal ve akıcı ifadeleri tercih et.
+- Resmi dil yerine samimi ve anlaşılır günlük Türkçe kullan.
+- Arapça deyimleri ve kalıp ifadeleri birebir çevirme, Türkçedeki karşılıklarını kullan.
+- Sadece çeviri sonucunu döndür, açıklama veya not ekleme.
+- Kısa mesajlarda bile doğal ve samimi bir ton kullan."""
+
+
 def is_arabic(text):
     arabic_count = 0
     total_count = 0
@@ -29,18 +46,20 @@ def is_arabic(text):
         return False
     return (arabic_count / total_count) > 0.5
 
+
 def is_only_emoji_or_punctuation(text):
     for char in text:
         if char.isalpha() or char.isdigit():
             return False
     return True
 
+
 async def translate_text(text, source_lang, target_lang):
     try:
         if source_lang == "tr":
-            system_msg = "Sen bir çeviri asistanısın. Sana verilen Türkçe metni Suriye Arapçasına çevir. Sadece çeviri sonucunu dondur, başka hiçbir şey ekleme."
+            system_msg = TR_TO_AR_PROMPT
         else:
-            system_msg = "Sen bir çeviri asistanısın. Sana verilen Arapça metni Türkiye Türkçesine çevir. Sadece çeviri sonucunu dondur, başka hiçbir şey ekleme."
+            system_msg = AR_TO_TR_PROMPT
 
         response = client.chat.completions.create(
             model="llama-3.3-70b-versatile",
@@ -48,12 +67,14 @@ async def translate_text(text, source_lang, target_lang):
                 {"role": "system", "content": system_msg},
                 {"role": "user", "content": text}
             ],
-            max_tokens=1000
+            max_tokens=1000,
+            temperature=0.3
         )
         return response.choices[0].message.content.strip()
     except Exception as e:
-        logger.error(f"Çeviri hatası: {e}")
+        logger.error(f"Ceviri hatasi: {e}")
         return None
+
 
 async def handle_message(update: Update, context):
     if not update.message or not update.message.text:
@@ -80,14 +101,17 @@ async def handle_message(update: Update, context):
             reply = f"@{username}:\n{translated}"
             await update.message.reply_text(reply)
 
+
 async def start(update: Update, context):
-    await update.message.reply_text("Merhaba! Ben Mavi, çeviri botuyum.")
+    await update.message.reply_text("Merhaba! Ben Mavi, ceviri botuyum.")
+
 
 def main():
     app = Application.builder().token(TOKEN).build()
     app.add_handler(CommandHandler("start", start))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
     app.run_polling(allowed_updates=Update.ALL_TYPES)
+
 
 if __name__ == "__main__":
     main()
