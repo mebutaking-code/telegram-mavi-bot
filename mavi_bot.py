@@ -43,7 +43,7 @@ async def translate_text(text, source_lang, target_lang):
             system_msg = "Sen bir çeviri asistanısın. Sana verilen Arapça metni Türkiye Türkçesine çevir. Sadece çeviri sonucunu dondur, başka hiçbir şey ekleme."
 
         response = client.chat.completions.create(
-            model="deepseek-chat",
+            model="llama-3.3-70b-versatile",
             messages=[
                 {"role": "system", "content": system_msg},
                 {"role": "user", "content": text}
